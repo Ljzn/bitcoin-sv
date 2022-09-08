@@ -27,3 +27,9 @@ jobs:
       run: make
     - run: ls -R
       working-directory: ./build
+    - name: compress
+      run: tar -czf archive.tar.gz ./build
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: archive.tar.gz
