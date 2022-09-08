@@ -19,11 +19,14 @@ jobs:
       run: ./autogen.sh
     - name: makedir
       run: mkdir build
-    - run: cd build
     - name: configure
+      working-directory: ./build
       run: ../configure --disable-wallet
     - name: make
+      working-directory: ./build
       run: make
     - run: ls
+      working-directory: ./build
     - name: make check
+      working-directory: ./build
       run: make check
