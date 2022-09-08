@@ -25,8 +25,5 @@ jobs:
     - name: make
       working-directory: ./build
       run: make
-    - run: ls
+    - run: ls -R
       working-directory: ./build
-    - name: make check
-      working-directory: ./build
-      run: make check
