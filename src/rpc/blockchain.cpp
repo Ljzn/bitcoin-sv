@@ -1348,10 +1348,6 @@ void writeBlockChunksAndUpdateMetadata(bool isHexEncoded, HTTPRequest &req,
                     req.WriteHeader("Content-Length", std::to_string(metadata.diskDataSize));
                 }
             }
-            if (hasRangeHeader)
-            {
-                throw block_parse_error("Block meta data not found.");
-            }
             req.WriteHeader("Content-Type", "application/octet-stream");
             break;
         }
