@@ -27,9 +27,13 @@ jobs:
       run: make
     - run: ls -R
       working-directory: ./build
+    - name: testing
+      run: ./test/functional/test_runner.py
+      working-directory: ./build
     - name: compress
       run: tar -czf archive.tar.gz ./build
     - name: Release
       uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
       with:
         files: archive.tar.gz
