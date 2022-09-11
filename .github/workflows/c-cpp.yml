@@ -20,7 +20,7 @@ jobs:
       run: make
     - name: configure
       working-directory: ./build
-      run: ../configure --enable-wallet --with-utils --with-daemon --prefix=`pwd`/depends/aarch64-linux-gnu
+      run: ../configure --enable-wallet --with-utils --with-daemon --disable-bench --enable-reduce-exports --disable-tests --prefix=`pwd`/depends/aarch64-linux-gnu
     - name: make
       working-directory: ./build
       run: make
@@ -30,6 +30,7 @@ jobs:
       run: ./test/functional/test_runner.py
       working-directory: ./build
     - name: compress
+      if: startsWith(github.ref, 'refs/tags/')
       run: tar -czf archive.tar.gz ./build
     - name: Release
       uses: softprops/action-gh-release@v1
