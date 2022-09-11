@@ -1292,7 +1292,6 @@ void writeBlockChunksAndUpdateMetadata(bool isHexEncoded, HTTPRequest &req,
         do
         {
             auto chunk = stream->Read(4096);
-            auto begin = reinterpret_cast<const char *>(chunk.Begin());
             metadata.diskDataSize += chunk.Size();
         } while (!stream->EndOfStream());
 

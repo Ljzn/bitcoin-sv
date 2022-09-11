@@ -15,9 +15,18 @@ jobs:
       run: ./autogen.sh
     - name: makedir
       run: mkdir build
-    - name: dependency
+
+    - name: Cache Deps
+      id: cache-deps
+      uses: actions/cache@v2
+      with:
+        path: ./depends
+        key: ${{ runner.os }}-deps
+    - name: Dependency
+      if: steps.cache-deps.outputs.cache-hit != 'true'
       working-directory: ./depends
       run: make
+
     - name: configure
       working-directory: ./build
       run: ../configure --enable-wallet --with-utils --with-daemon --disable-bench --enable-reduce-exports --disable-tests --prefix=`pwd`/depends/aarch64-linux-gnu
