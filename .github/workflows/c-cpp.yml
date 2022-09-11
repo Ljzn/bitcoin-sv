@@ -9,6 +9,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      path: 'bitcoin-sv'
+      
     - name: Gitian Build
       run: ./contrib/gitian/gitian-build.py -Dnb -o l ljzn 1.0.11.3
 
