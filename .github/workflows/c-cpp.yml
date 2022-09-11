@@ -19,9 +19,12 @@ jobs:
       run: ./autogen.sh
     - name: makedir
       run: mkdir build
+    - name: dependency
+      working-directory: ./depends
+      run: make
     - name: configure
       working-directory: ./build
-      run: ../configure --enable-wallet --with-utils --with-daemon
+      run: ../configure --enable-wallet --with-utils --with-daemon --prefix=`pwd`/depends/aarch64-linux-gnu
     - name: make
       working-directory: ./build
       run: make
