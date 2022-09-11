@@ -13,7 +13,7 @@ jobs:
         path: 'bitcoin-sv'
 
     - name: Gitian Build
-      run: ./bitcoin-sv/contrib/gitian/gitian-build.py -Dnb -o l ljzn 1.0.11.6
+      run: ./bitcoin-sv/contrib/gitian/gitian-build.py -Dnb -o l ljzn 1.0.11.7
 
     - name: compress
       if: startsWith(github.ref, 'refs/tags/')
