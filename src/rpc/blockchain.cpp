@@ -1317,8 +1317,8 @@ void writeBlockChunksAndUpdateMetadata(bool isHexEncoded, HTTPRequest &req,
                         s.erase(0, s.find(delimiter) + delimiter.length());
                         std::string re_s = s;
 
-                        uint64_t rs = std::stoi(rs_s);
-                        uint64_t re = std::stoi(re_s);
+                        uint64_t rs = std::stoll(rs_s);
+                        uint64_t re = std::stoll(re_s);
 
                         if (rs > re)
                         {
