@@ -1376,7 +1376,11 @@ void writeBlockChunksAndUpdateMetadata(bool isHexEncoded, HTTPRequest &req,
 
     if (!processedInBatch)
     {
-        req.StartWritingChunks(HTTP_OK);
+        if (hasRangeHeader) {
+            req.StartWritingChunks(HTTP_PARTIAL_CONTENT);
+        } else {
+            req.StartWritingChunks(HTTP_OK);
+        }
     }
 
     // RPC requests have additional layer around the actual response 
