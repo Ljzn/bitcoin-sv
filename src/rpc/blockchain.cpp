@@ -1305,46 +1305,44 @@ void writeBlockChunksAndUpdateMetadata(bool isHexEncoded, HTTPRequest &req,
     {
         case RF_BINARY:
         {
-            if (hasDiskBlockMetaData)
+            if (hasRangeHeader)
             {
-                if (hasRangeHeader)
+                try
                 {
-                    try
+                    std::string s = range_header.second;
+                    assert(s.find("bytes=") == 0);
+                    s.erase(0, 6);
+                    std::string delimiter = "-";
+                    std::string rs_s = s.substr(0, s.find(delimiter));
+                    s.erase(0, s.find(delimiter) + delimiter.length());
+                    std::string re_s = s;
+
+                    uint64_t rs = std::stoll(rs_s);
+                    uint64_t re = std::stoll(re_s);
+
+                    if (rs > re)
                     {
-                        std::string s = range_header.second;
-                        assert(s.find("bytes=") == 0);
-                        s.erase(0, 6);
-                        std::string delimiter = "-";
-                        std::string rs_s = s.substr(0, s.find(delimiter));
-                        s.erase(0, s.find(delimiter) + delimiter.length());
-                        std::string re_s = s;
-
-                        uint64_t rs = std::stoll(rs_s);
-                        uint64_t re = std::stoll(re_s);
-
-                        if (rs > re)
-                        {
-                            throw block_parse_error("Invalid Range parameter, start > end");
-                        }
-                        if (rs >= metadata.diskDataSize)
-                        {
-                            throw block_parse_error("Invalid Range parameter, start >= data_size");
-                        }
-
-                        offset = rs;
-
-                        uint64_t remain = metadata.diskDataSize - offset;
-                        content_length = std::min(remain, re - rs + 1);
-
-                        req.WriteHeader("Content-Length", std::to_string(content_length));
-                        req.WriteHeader("Content-Range", "bytes " + std::to_string(offset) + "-" + 
-                            std::to_string(content_length - 1) + "/" + std::to_string(metadata.diskDataSize));
+                        throw block_parse_error("Invalid Range parameter, start > end");
                     }
-                    catch (...) {
-                        throw block_parse_error("Invalid Range parameter.");
+                    if (rs >= metadata.diskDataSize)
+                    {
+                        throw block_parse_error("Invalid Range parameter, start >= data_size");
                     }
+
+                    offset = rs;
+
+                    uint64_t remain = metadata.diskDataSize - offset;
+                    content_length = std::min(remain, re - rs + 1);
+
+                    req.WriteHeader("Content-Length", std::to_string(content_length));
+                    req.WriteHeader("Content-Range", "bytes " + std::to_string(offset) + "-" + 
+                        std::to_string(content_length - 1) + "/" + (hasDiskBlockMetaData ? std::to_string(metadata.diskDataSize) : "*");
                 }
-                else
+                catch (...) {
+                    throw block_parse_error("Invalid Range parameter.");
+                }
+            } else {
+                if (hasDiskBlockMetaData)
                 {
                     req.WriteHeader("Content-Length", std::to_string(metadata.diskDataSize));
                 }
