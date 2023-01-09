@@ -1284,7 +1284,7 @@ void writeBlockChunksAndUpdateMetadata(bool isHexEncoded, HTTPRequest &req,
     bool hasRangeHeader = range_header.first;
 
     uint64_t offset;
-    uint64_t content_length;
+    uint64_t contentLen;
     std::unique_ptr<CForwardReadonlyStream> stream;
 
     switch (rf)
@@ -1318,11 +1318,12 @@ void writeBlockChunksAndUpdateMetadata(bool isHexEncoded, HTTPRequest &req,
                     offset = rs;
 
                     uint64_t remain = metadata.diskDataSize - offset;
-                    content_length = std::min(remain, re - rs + 1);
+                    contentLen = std::min(remain, re - rs + 1);
+                    std::string totalLen = hasDiskBlockMetaData ? std::to_string(metadata.diskDataSize) : "*";
 
-                    req.WriteHeader("Content-Length", std::to_string(content_length));
+                    req.WriteHeader("Content-Length", std::to_string(contentLen));
                     req.WriteHeader("Content-Range", "bytes " + std::to_string(offset) + "-" + 
-                        std::to_string(content_length - 1) + "/" + (hasDiskBlockMetaData ? std::to_string(metadata.diskDataSize) : "*");
+                        std::to_string(contentLen - 1) + "/" + totalLen);
                 }
                 catch (...) {
                     throw block_parse_error("Invalid Range parameter.");
@@ -1375,7 +1376,7 @@ void writeBlockChunksAndUpdateMetadata(bool isHexEncoded, HTTPRequest &req,
 
     if (hasRangeHeader)
     {
-        stream = blockIndex.StreamSyncPartialBlockFromDisk(offset, content_length);
+        stream = blockIndex.StreamSyncPartialBlockFromDisk(offset, contentLen);
     }
     else
     {
