@@ -1287,20 +1287,6 @@ void writeBlockChunksAndUpdateMetadata(bool isHexEncoded, HTTPRequest &req,
     uint64_t content_length;
     std::unique_ptr<CForwardReadonlyStream> stream;
 
-    if (!hasDiskBlockMetaData && hasRangeHeader) {
-        stream = blockIndex.StreamSyncBlockFromDisk();
-        do
-        {
-            auto chunk = stream->Read(4096);
-            metadata.diskDataSize += chunk.Size();
-        } while (!stream->EndOfStream());
-
-        blockIndex.SetBlockIndexFileMetaDataIfNotSet(metadata, mapBlockIndex);
-
-        metadata = blockIndex.GetDiskBlockMetaData();
-        hasDiskBlockMetaData = !metadata.diskDataHash.IsNull();
-    }
-
     switch (rf)
     {
         case RF_BINARY:
