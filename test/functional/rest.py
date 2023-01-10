@@ -268,6 +268,17 @@ class RESTTest (BitcoinTestFramework):
         assert_equal(response.status, 206)
         assert_equal(int(response.getheader('content-length')), 20)
 
+        # get binary block with invalid range parameters
+        # range overlapping
+        response = http_get_call_with_headers(
+            url.hostname, url.port, '/rest/block/' + bb_hash + self.FORMAT_SEPARATOR + "bin", {'Range': 'bytes=29-10'}, True)
+        assert_equal(response.status, 404)
+        # invalid format
+        response = http_get_call_with_headers(
+            url.hostname, url.port, '/rest/block/' + bb_hash + self.FORMAT_SEPARATOR + "bin", {'Range': '10-29'}, True)
+        assert_equal(response.status, 404)
+
+
         # compare with block header
         response_header = http_get_call(
             url.hostname, url.port, '/rest/headers/1/' + bb_hash + self.FORMAT_SEPARATOR + "bin", True)
