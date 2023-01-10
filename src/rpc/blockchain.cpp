@@ -1296,7 +1296,10 @@ void writeBlockChunksAndUpdateMetadata(bool isHexEncoded, HTTPRequest &req,
                 try
                 {
                     std::string s = range_header.second;
-                    assert(s.find("bytes=") == 0);
+                    if (s.find("bytes=") != 0)
+                    {
+                        throw block_parse_error("Invalid Range header format, should starts with 'bytes='");
+                    }
                     s.erase(0, 6);
                     std::string delimiter = "-";
                     std::string rs_s = s.substr(0, s.find(delimiter));
